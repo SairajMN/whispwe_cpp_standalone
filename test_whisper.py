@@ -11,6 +11,7 @@ No deps. Tests use MockWhisper, never hit whisper-cli.
 from __future__ import annotations
 
 import asyncio
+import os
 import sys
 import time
 
@@ -110,6 +111,7 @@ ALL_TESTS = [
 
 async def demo_transcribe(wav_path: str):
     """Transcribe a real WAV file using whisper-cli."""
+    wav_path = os.path.normpath(wav_path)  # handle Windows backslashes
     print(f"\n=== Real audio demo: {wav_path} ===\n")
 
     with open(wav_path, "rb") as f:
@@ -129,9 +131,9 @@ async def demo_transcribe(wav_path: str):
         print(f"    Duration:  {result.duration_ms}ms")
         print(f"    Time:      {elapsed:.2f}s")
         if elapsed > 1.0:
-            print(f"    ⚠  Above 1s target. Set WHISPER_MODEL=tiny and WHISPER_THREADS=4")
+            print(f"     Above 1s target. Set WHISPER_MODEL=tiny and WHISPER_THREADS=4")
         else:
-            print(f"    ✅ Under 1s target")
+            print(f"     Under 1s target")
     except Exception as e:
         elapsed = time.perf_counter() - start
         print(f"\n  Error after {elapsed:.2f}s: {e}")
