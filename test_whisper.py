@@ -21,7 +21,7 @@ from adapter import MockWhisper, Provider, STTError, TranscribeResult
 def test_provider_name_matches():
     p = Provider(config={"mock": MockWhisper()})
     assert p.name == "whisper_cpp", f"expected whisper_cpp, got {p.name}"
-    print("  ✔ test_provider_name_matches")
+    print("  test_provider_name_matches")
 
 
 def test_transcribe_returns_transcribe_result():
@@ -32,7 +32,7 @@ def test_transcribe_returns_transcribe_result():
         assert isinstance(r, TranscribeResult), f"expected TranscribeResult, got {type(r)}"
         assert r.provider == "whisper_cpp", f"expected whisper_cpp, got {r.provider}"
         assert r.language == "en", f"expected en, got {r.language}"
-        print("  ✔ test_transcribe_returns_transcribe_result")
+        print("   test_transcribe_returns_transcribe_result")
     asyncio.run(run())
 
 
@@ -45,7 +45,7 @@ def test_transcribe_passes_audio_to_upstream():
         assert mock.received_calls[-1]["audio_len"] == 1234, (
             f"expected 1234, got {mock.received_calls[-1]['audio_len']}"
         )
-        print("  ✔ test_transcribe_passes_audio_to_upstream")
+        print("   test_transcribe_passes_audio_to_upstream")
     asyncio.run(run())
 
 
@@ -56,7 +56,7 @@ def test_transcribe_records_duration_ms():
         p = Provider(config={"mock": mock})
         r = await p.transcribe(b"AUDIO", "audio/wav")
         assert r.duration_ms == 1337, f"expected 1337, got {r.duration_ms}"
-        print("  ✔ test_transcribe_records_duration_ms")
+        print("   test_transcribe_records_duration_ms")
     asyncio.run(run())
 
 
@@ -80,7 +80,7 @@ def test_transcribe_handles_empty_audio():
         p = Provider(config={"mock": mock})
         r = await p.transcribe(b"", "audio/wav")
         assert isinstance(r, TranscribeResult), "empty audio must return TranscribeResult"
-        print("  ✔ test_transcribe_handles_empty_audio")
+        print("   test_transcribe_handles_empty_audio")
     asyncio.run(run())
 
 
@@ -111,7 +111,8 @@ ALL_TESTS = [
 
 async def demo_transcribe(wav_path: str):
     """Transcribe a real WAV file using whisper-cli."""
-    wav_path = os.path.normpath(wav_path)  # handle Windows backslashes
+    # Handle Windows backslashes and any escape sequences
+    wav_path = wav_path.replace("\\", "/").replace("\t", "t")
     print(f"\n=== Real audio demo: {wav_path} ===\n")
 
     with open(wav_path, "rb") as f:
